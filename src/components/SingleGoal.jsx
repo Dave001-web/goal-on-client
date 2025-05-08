@@ -8,11 +8,12 @@ import { axiosInstance } from "../axiosInstance";
 const SingleGoal = ({ title, description, progress, _id }) => {
   const path = useLocation().pathname;
   const handleDelete = async(goalid)=>{
-    if (data.success){
-      window.location.reload();
-    }
+  
     try {
       const {data} = await axiosInstance.delete(`/${goalid}`)
+      if (data.success) {
+        window.location.reload();
+      }
     } catch (error) {
       console.log(error);
       

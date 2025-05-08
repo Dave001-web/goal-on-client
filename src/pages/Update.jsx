@@ -32,7 +32,7 @@ const handleUpdate = async (e)=>{
   e.preventDefault();
   setIsSubmitting(true);
   try {
-     const {data} = await axiosInstance.patch(`/${goalid}`, {title,description,progress})
+     const {data} = await axiosInstance.patch(`/${goalid}`, {title : title.toLowerCase(),description,progress})
   if(data.success){
     redirect("/all")
     }
