@@ -6,13 +6,44 @@ import Loading from "../components/Loading";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../axiosInstance";
 
 const Update = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [progress, setProgress] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [IsSubmitting, setIsSubmitting] = useState(false)
   const redirect = useNavigate();
+  const {goalid} = useParams();
+
+  useEffect(()=>{
+    const getGoal = async()=>{
+      const {data} = await axiosInstance(`/ ${goalid}`)
+      setIsLoading(false);
+      setTitle(data.goal.title)
+      setDescription(data.goal.description)
+      setProgress(data.goal.progress)
+    };
+    getGoal ()
+  }, [goalid])
+
+const handleUpdate = async (e)=>{
+  e.preventDefault();
+  setIsSubmitting(true);
+  try {
+     const {data} = await axiosInstance.patch(`/${goalid}`, {title,description,progress})
+  if(data.success){
+    redirect("/all")
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("you can not change to an existing title")
+    setIsSubmitting(false)
+  }
+  }
+
+
 
   return (
     <>
@@ -23,7 +54,7 @@ const Update = () => {
         <div className="container d-flex justify-content-between align-items-center mt-3 pb-3 gap-lg-2">
           <div className="main-form py-5 px-1 ps-lg-2 ps-xl-3 pe-xl-3 rounded-2">
             <ToastContainer />
-            <form className="create-form">
+            <form onSubmit={handleUpdate} className="create-form">
               <div className="mt-2">
                 <input
                   type="text"
@@ -54,10 +85,11 @@ const Update = () => {
                   min="0"
                   max="100"
                   className="bg-transparent mt-2"
+                  required
                 />
               </div>
               <div className="mt-2">
-                <button className="blue-bg p-2">Update</button>
+                <button className="blue-bg p-2" disabled={IsSubmitting}>{IsSubmitting ? "Updating..." : "Update"}</button>
               </div>
             </form>
           </div>

@@ -16,6 +16,8 @@ const Allgoals = () => {
 
   const getGoals = async () => {
     const { data } = await axiosInstance("/");
+    console.log(data);
+    
     setIsLoading(false);
     setGoals(data.goals);
   };
